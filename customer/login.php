@@ -1,3 +1,9 @@
+<?php
+session_start();
+require('db.php');
+$cEmail = isset($_COOKIE['cEmail']) ? $_COOKIE['cEmail'] : "";
+$cPass = isset($_COOKIE['cPass']) ? $_COOKIE['cPass'] : "";
+?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -20,7 +26,8 @@
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
-  https://cdn.jsdelivr.net/npm/bootstrap-icons@1.3.0/font/bootstrap-icons.css
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.3.0/font/bootstrap-icons.css">
+  
 
   <link href="css/templatemo-festava-live.css" rel="stylesheet">
 
@@ -40,70 +47,30 @@
             <div class="card-body p-4">
               <div class="offcanvas-body d-flex flex-column">
                 <h5 class="offcanvas-title text-center mb-2">Login</h5>
-                <?php
-                require('db.php');
-                session_start();
                 
-                // When form submitted, check and create user session.
-                if (isset($_POST['email'])) {
-                  $email = stripslashes($_REQUEST['email']);    // removes backslashes
-                  $email = mysqli_real_escape_string($con, $email);
-                  $password = stripslashes($_REQUEST['password']);
-                  $password = mysqli_real_escape_string($con, $password);
-                  // Check user is exist in the database
-                  $query    = "SELECT custname FROM `customer` WHERE email='$email'
-                    AND password='$password'";
-                  // $_SESSION['custname'] = $query;
-                  $result = mysqli_query($con, $query) or die(mysqli_error($con));
-                  while ($row = mysqli_fetch_assoc($result)) {
-                    $_SESSION['custname'] = $row['custname'];
-                  }
-                  $rows = mysqli_num_rows($result);
-                  if ($rows) {
-                    if (isset($_POST['remember'])) {
-                      setcookie("email", $email, time() + (1 * 60 * 60));
-                      setcookie("password", $password, time() + (1 * 60 * 60));
-                    } else {
-                      setcookie("email", $email, time() - (1 * 60 * 60));
-                      setcookie("password", $password, time() - (1 * 60 * 60));
-                    }
-                  }
-                  if ($rows == 1) {
-                    $_SESSION['email'] = $email;
-                    // Redirect to user dashboard page
-                    header("Location: home.php");
-                  } else {
-                    echo "<div class='form'>
-                      <h3 class='text-white'role='alert'>Incorrect email/password.</h3><br/>
-                      <p class='small fw-bold mt-2 pt-1 mb-0' style='color :#22577E'>Click to <a href='Login.php'>Login</a> Again</p>
-                      </div>";
-                  }
-                }
-
-                ?>
-                <form class="custom-form member-login-form" action="" method="post" role="form">
+                <!-- LOGIN FORM START -->
+                <form class="custom-form member-login-form" action="check-login.php" method="post" role="form">
 
                   <div class="member-login-form-body">
                     <div class="mb-4">
                       <label class="form-label mb-2">Email</label>
 
-                      <input type="email" name="email" class="form-control" placeholder="Email" value="<?php
-                                                                                                        echo (isset($_COOKIE['email'])) ? $_COOKIE['email'] : '' ?>" required>
+                      <input type="email" name="txtEmail" class="form-control" placeholder="Email" value="<?= $cEmail ?>" required>
                     </div>
 
                     <div class="mb-4">
                       <label class="form-label mb-2" for="member-login-password">Password</label>
 
-                      <input type="password" name="password" id="member-login-password" pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,16}" class="form-control" placeholder="Password" value="<?php
-                                                                                                                                                                                            echo (isset($_COOKIE['password'])) ? $_COOKIE['password'] : '' ?>" required>
+                      <input type="password" name="txtPass" id="member-login-password" class="form-control" placeholder="Password" value="<?= $cPass ?>" required>
+                      
                       <div class="form-check mb-4">
-                        <input class="form-check-input" type="checkbox" name="remember" id="flexCheckDefault">
+                        <input class="form-check-input" type="checkbox" name="chkRemember" id="flexCheckDefault">
                         <label class="form-check-label" for="flexCheckDefault">Remember me</label>&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;
                         <a href="forgot.php">Forgotten password?</a>
                       </div>
 
                       <div class="col-lg-5 col-md-7 col-8 mx-auto mb-4">
-                        <button type="submit" class="form-control">Login</button>
+                        <button type="submit" class="form-control" name="btnLogin">Login</button>
                       </div>
                     </div>
                     <div class="mt-auto">
@@ -114,6 +81,7 @@
                       </p>
                     </div>
                 </form>
+                <!-- LOGIN FORM END -->
 
               </div>
             </div>

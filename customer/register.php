@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
 
   <meta charset="utf-8">
@@ -16,9 +17,9 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,400;0,500;0,700;1,400&display=swap" rel="stylesheet">
-  
-   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
   <link href="css/bootstrap-icons.css" rel="stylesheet">
 
@@ -39,48 +40,22 @@
             <div class="card-body p-4">
               <div class="offcanvas-body d-flex flex-column">
                 <h5 class="offcanvas-title text-center mb-2">Register</h5>
-                <?php
-                require('db.php');
-                // When form submitted, insert values into the database.
-
-                if (isset($_REQUEST['email'])) {
-                  // removes backslashes
-                  $custname = stripslashes($_REQUEST['custname']);
-                  //escapes special characters in a string
-                  $custname = mysqli_real_escape_string($con, $custname);
-                  $email    = stripslashes($_REQUEST['email']);
-                  $email    = mysqli_real_escape_string($con, $email);
-                  $password = stripslashes($_REQUEST['password']);
-                  $password = mysqli_real_escape_string($con, $password);
-                  $contact = stripslashes($_REQUEST['contact']);
-                  $contact = mysqli_real_escape_string($con, $contact);
-                  $create_datetime = date("Y-m-d H:i:s");
-                  $query    = "INSERT into `customer` (custname,contact, password, email)
-                                  VALUES ('$custname', '$contact','$password', '$email')";
-                  $result   = mysqli_query($con, $query);
-                  if ($result) {
-                    echo "<div class='form'>
-                      <h3 class='text-white' role='alert'>You are registered successfully.</h3><br/>
-                      <p class='small fw-bold mt-2 pt-1 mb-0' style='color :#22577E'>Already have an account? <a href='login.php'class='link-danger'>Login</a></p>
-                      </div>";
-                  } else {
-                    echo "<div class='form'>
-                      <h3 class='text-warning'role='alert'>Required fields are missing.</h3><br/>
-                          <p class='link'>Click here to <a href='register.php'>Registration</a> again.</p>
-                          </div>";
-                  }
-                } else {
-                ?>
-                  <form class="custom-form member-login-form" action="#" method="post" role="form">
+                
+                  <form class="custom-form member-login-form" action="check-register.php" method="post" role="form">
 
                     <div class="member-login-form-body">
                       <div class="mb-4">
-                        <label for="yourName" class="form-label mb-2">Your Name</label>
+                        <label for="yourName" class="form-label mb-2">Fist Name</label>
                         <input type="text" name="custname" class="form-control" id="yourName" placeholder="Your Name" required>
                       </div>
 
                       <div class="mb-4">
-                        <label for="yourEmail" class="form-label mb-2">Your Email</label>
+                        <label for="yourName" class="form-label mb-2">Last Name</label>
+                        <input type="text" name="custname" class="form-control" id="yourName" placeholder="Your Name" required>
+                      </div>
+
+                      <div class="mb-4">
+                        <label for="yourEmail" class="form-label mb-2">Email</label>
                         <input type="email" name="email" class="form-control" id="yourEmail" placeholder="Email" required>
                       </div>
 
@@ -91,6 +66,11 @@
 
                       <div class="mb-4">
                         <label class="form-label mb-2" for="member-login-password">Password</label>
+                        <input type="password" name="password" id="member-login-password" pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,16}" class="form-control" placeholder="Password" required="">
+                      </div>
+
+                      <div class="mb-4">
+                        <label class="form-label mb-2" for="member-login-password">Confirm Password</label>
                         <input type="password" name="password" id="member-login-password" pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,16}" class="form-control" placeholder="Password" required="">
                       </div>
 
@@ -110,9 +90,7 @@
                       <strong class="fw-bold mt-2 me-3 pt-1 mb-0 text-white">Already have an account?<a href="login.php">&emsp;Login</a></strong>
                     </p>
                   </div>
-                <?php
-                }
-                ?>
+                
               </div>
             </div>
           </div>
@@ -120,8 +98,6 @@
       </div>
     </div>
   </div>
-  </div>
-
 
 
   <script src="js/jquery.min.js"></script>

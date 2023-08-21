@@ -1,5 +1,6 @@
 <?php
-include("auth_session.php");
+session_start();
+include_once("db.php");
 ?>
 <!doctype html>
 <html lang="en">
@@ -14,137 +15,26 @@ include("auth_session.php");
     <title>Watch Better</title>
 
     <!-- CSS FILES -->
-   <link rel="preconnect" href="https://fonts.googleapis.com">
-        
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-        
-        <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@100;200;400;700&display=swap" rel="stylesheet">
-                
-        <link href="css/bootstrap.min.css" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
 
-        <link href="css/bootstrap-icons.css" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
-        <link href="css/templatemo-festava-live.css" rel="stylesheet">
-        
-    <!--
- Watch Better
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@100;200;400;700&display=swap" rel="stylesheet">
 
-https://templatemo.com/tm-583-festava-live
+    <link href="css/bootstrap.min.css" rel="stylesheet">
 
+    <link href="css/bootstrap-icons.css" rel="stylesheet">
 
--->
+    <link href="css/templatemo-festava-live.css" rel="stylesheet">
+
+    <!--    Watch Better https://templatemo.com/tm-583-festava-live -->
 </head>
 
 <body>
+    <!-- header -->
+    <?php include_once("header.php"); ?>
+
     <main>
-        <header class="site-header">
-                <div class="container">
-                    <div class="row">
-                        
-                        <div class="col-lg-12 col-12 d-flex flex-wrap">
-                            <p class="d-flex me-4 mb-0">
-                                <i class="bi-person custom-icon me-2"></i>
-                                <strong class="text-dark">Welcome to Watch Better</strong>
-                            </p>
-                        </div>
-
-                    </div>
-                </div>
-        </header>
-        <nav class="navbar navbar-expand-lg">
-            <div class="container">
-                <a class="navbar-brand d-flex align-items-center" href="Home.php">
-                    <img src="" class="navbar-brand-image img-fluid">
-                    <span class="navbar-brand-text">
-                        Watch Better
-                    </span>
-                </a>
-
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-
-                <div class="collapse navbar-collapse" id="navbarNav">
-                    <ul class="navbar-nav align-items-lg-center ms-auto me-lg-5">
-                        <li class="nav-item">
-                            <a class="nav-link click-scroll" href="#section_1">Home</a>
-                        </li>
-
-                        <li class="nav-item">
-                            <a class="nav-link click-scroll" href="#section_2">About</a>
-                        </li>
-
-                        <li class="nav-item">
-                            <a class="nav-link click-scroll" href="#section_3">Movies</a>
-                        </li>
-
-                        <li class="nav-item">
-                            <a class="nav-link click-scroll" href="#section_4">Schedule</a>
-                        </li>
-                        <!-- 
-                        <li class="nav-item">
-                            <a class="nav-link click-scroll" href="#section_5">Pricing</a>
-                        </li> -->
-
-                        <li class="nav-item">
-                            <a class="nav-link click-scroll" href="#section_6">Contact</a>
-                        </li>
-                        <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle btn custom-btn custom-border-btn text-light" href="" role="button" data-bs-toggle="dropdown" aria-expanded="false"><?php echo $_SESSION['custname']; ?></a>
-
-                            <ul class="dropdown-menu dropdown-menu-light" aria-labelledby="navbarLightDropdownMenuLink">
-                                <li class="dropdown-header">
-                                    <h6>
-                                        <img src="" width="40px" height="40px" alt="Profile" class="rounded-circle"><?php echo $_SESSION['custname']; ?>
-                                    </h6>
-                                </li>
-                                <li>
-                                    <hr class="dropdown-divider">
-                                </li>
-
-                                <li>
-                                    <a class="dropdown-item d-flex align-items-center" href="users-profile.php">
-                                        <i class="bi bi-person"></i>&emsp;
-                                        <span>My Profile</span>
-                                    </a>
-                                </li>
-                                <li>
-                                    <hr class="dropdown-divider">
-                                </li>
-
-                                <li>
-                                    <a class="dropdown-item d-flex align-items-center" href="users-profile.php">
-                                        <i class="bi bi-gear"></i>&emsp;
-                                        <span>Account Settings</span>
-                                    </a>
-                                </li>
-                                <li>
-                                    <hr class="dropdown-divider">
-                                </li>
-
-                                <li>
-                                    <a class="dropdown-item d-flex align-items-center" href="pages-faq.php">
-                                        <i class="bi bi-question-circle"></i>&emsp;
-                                        <span>Need Help?</span>
-                                    </a>
-                                </li>
-                                <li>
-                                    <hr class="dropdown-divider">
-                                </li>
-
-                                <li>
-                                    <a class="dropdown-item d-flex align-items-center" href="logout.php">
-                                        <i class="bi bi-box-arrow-right"></i>&emsp;
-                                        <span>Sign Out</span>
-                                    </a>
-                                </li>
-
-                            </ul><!-- End Profile Dropdown Items -->
-                        </li><!-- End Profile Nav -->
-                    </ul>
-                </div>
-            </div>
-        </nav>
 
         <section class="hero-section" id="section_1">
             <div class="section-overlay"></div>
@@ -303,6 +193,64 @@ https://templatemo.com/tm-583-festava-live
                         </div>
                     </div>
 
+                    <?php
+                    $fetchMovies = "SELECT movie.movie_id, movie_name, poster_img, description, AVG(rating) AS movie_rating 
+                    FROM movie
+                    LEFT JOIN movie_rating ON movie.movie_id = movie_rating.movie_id
+                    GROUP BY movie_id;";
+                    $rs = $con->query($fetchMovies);
+                    if ($rs->num_rows > 0) {
+                        while ($row = $rs->fetch_assoc()) { ?>
+                            <div class="col-lg-3 col-12">
+
+                                <div class="card mb-4" style="width: 14rem;">
+                                    <img class="card-img-top" src="<?= $row["poster_img"] ?>" alt="Poster">
+                                    <div class="card-body">
+                                        <h5 class="card-title"><?= $row["movie_name"] ?></h5>
+                                        <p class="card-text"><?= $row["description"] ?></p>
+                                        <a href="theatre.php?mid=<?= base64_encode($row["movie_id"]); ?>">
+                                            <span>Select Theatre</span>
+                                            <svg class="icon" viewBox="0 0 32 32" aria-hidden="true">
+                                                <g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+                                                    <circle cx="16" cy="16" r="15.5"></circle>
+                                                    <line x1="10" y1="18" x2="16" y2="12"></line>
+                                                    <line x1="16" y1="12" x2="22" y2="18"></line>
+                                                </g>
+                                            </svg>
+                                        </a>
+                                    </div>
+                                </div>
+
+                                <?php if (($row = $rs->fetch_assoc()) != null) { ?>
+
+                                    <div class="card mb-4" style="width: 14rem;">
+                                        <img class="card-img-top" src="<?= $row["poster_img"] ?>" alt="Poster">
+                                        <div class="card-body">
+                                            <h5 class="card-title"><?= $row["movie_name"] ?></h5>
+                                            <p class="card-text"><?= $row["description"] ?></p>
+                                            <a href="theatre.php?mid=<?= base64_encode($row["movie_id"]); ?>">
+                                                <span>Select Theatre</span>
+                                                <svg class="icon" viewBox="0 0 32 32" aria-hidden="true">
+                                                    <g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+                                                        <circle cx="16" cy="16" r="15.5"></circle>
+                                                        <line x1="10" y1="18" x2="16" y2="12"></line>
+                                                        <line x1="16" y1="12" x2="22" y2="18"></line>
+                                                    </g>
+                                                </svg>
+                                            </a>
+                                        </div>
+                                    </div>
+                                <?php
+                                }
+                                ?>
+                            </div>
+                    <?php
+                        }
+                    } else {
+                        echo "No movie available";
+                    }
+                    ?>
+
                     <div class="col-lg-3 col-12">
                         <div class="card mb-4" style="width: 14rem;">
                             <img class="card-img-top" src="https://th.bing.com/th/id/OIP.Jd36DvP4CKdtC3ROOoE2hAHaLH?pid=ImgDet&rs=1" alt="Pathan">
@@ -324,6 +272,7 @@ https://templatemo.com/tm-583-festava-live
 
                         <div class="card mb-4" style="width: 14rem;">
                             <img class="card-img-top" src="data:image/jpeg;base64,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" alt="Drishyam 2">
+
                             <div class="card-body">
                                 <h5 class="card-title">Drishyam 2</h5>
                                 <p class="card-text">A sequel to their 2013 film Drishyam and the second installment to the series, the film stars Mohanlal, Meena, Ansiba Hassan, Esther Anil.</p>
@@ -340,23 +289,6 @@ https://templatemo.com/tm-583-festava-live
                             </div>
                         </div>
 
-                        <!-- <div class="card mb-4" style="width: 15rem;">
-                            <img class="card-img-top" src="https://upload.wikimedia.org/wikipedia/en/c/c3/Pathaan_film_poster.jpg" alt="Pathan">
-                            <div class="card-body">
-                                <h5 class="card-title">Pathaan</h5>
-                                <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-                                <a href="ticket.php">
-                                    <span>Buy Ticket</span>
-                                    <svg class="icon" viewBox="0 0 32 32" aria-hidden="true">
-                                        <g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
-                                            <circle cx="16" cy="16" r="15.5"></circle>
-                                            <line x1="10" y1="18" x2="16" y2="12"></line>
-                                            <line x1="16" y1="12" x2="22" y2="18"></line>
-                                        </g>
-                                    </svg>
-                                </a>
-                            </div>
-                        </div> -->
                     </div>
 
                     <div class="col-lg-3 col-12">
@@ -396,23 +328,6 @@ https://templatemo.com/tm-583-festava-live
                             </div>
                         </div>
 
-                        <!-- <div class="card mb-4" style="width: 15rem;">
-                            <img class="card-img-top" src="https://upload.wikimedia.org/wikipedia/en/c/c3/Pathaan_film_poster.jpg" alt="Pathan">
-                            <div class="card-body">
-                                <h5 class="card-title">Pathaan</h5>
-                                <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-                                <a href="ticket.php">
-                                    <span>Buy Ticket</span>
-                                    <svg class="icon" viewBox="0 0 32 32" aria-hidden="true">
-                                        <g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
-                                            <circle cx="16" cy="16" r="15.5"></circle>
-                                            <line x1="10" y1="18" x2="16" y2="12"></line>
-                                            <line x1="16" y1="12" x2="22" y2="18"></line>
-                                        </g>
-                                    </svg>
-                                </a>
-                            </div>
-                        </div> -->
                     </div>
 
                     <div class="col-lg-3 col-12">
@@ -421,7 +336,7 @@ https://templatemo.com/tm-583-festava-live
                             <div class="card-body">
                                 <h5 class="card-title">Bhediya</h5>
                                 <p class="card-text">Bhediya (transl. Wolf) is a 2022 Indian Hindi-language comedy horror film directed by Amar Kaushik</p>
-<a href="seat_1.php?name=Bhediya&conno=8799478161&cname=Zeenal Bhalodiya&seats=3">
+                                <a href="seat_1.php?name=Bhediya&conno=8799478161&cname=Zeenal Bhalodiya&seats=3">
                                     <span>Buy Ticket</span>
                                     <svg class="icon" viewBox="0 0 32 32" aria-hidden="true">
                                         <g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
@@ -452,23 +367,6 @@ https://templatemo.com/tm-583-festava-live
                             </div>
                         </div>
 
-                        <!-- <div class="card mb-4" style="width: 15rem;">
-                            <img class="card-img-top" src="https://upload.wikimedia.org/wikipedia/en/c/c3/Pathaan_film_poster.jpg" alt="Pathan">
-                            <div class="card-body">
-                                <h5 class="card-title">Pathaan</h5>
-                                <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-                                <a href="ticket.php">
-                                    <span>Buy Ticket</span>
-                                    <svg class="icon" viewBox="0 0 32 32" aria-hidden="true">
-                                        <g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
-                                            <circle cx="16" cy="16" r="15.5"></circle>
-                                            <line x1="10" y1="18" x2="16" y2="12"></line>
-                                            <line x1="16" y1="12" x2="22" y2="18"></line>
-                                        </g>
-                                    </svg>
-                                </a>
-                            </div>
-                        </div> -->
                     </div>
 
                     <div class="col-lg-3 col-12">
@@ -508,23 +406,6 @@ https://templatemo.com/tm-583-festava-live
                             </div>
                         </div>
 
-                        <!-- <div class="card mb-4" style="width: 15rem;">
-                            <img class="card-img-top" src="https://upload.wikimedia.org/wikipedia/en/c/c3/Pathaan_film_poster.jpg" alt="Pathan">
-                            <div class="card-body">
-                                <h5 class="card-title">Pathaan</h5>
-                                <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-                                <a href="ticket.php">
-                                    <span>Buy Ticket</span>
-                                    <svg class="icon" viewBox="0 0 32 32" aria-hidden="true">
-                                        <g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
-                                            <circle cx="16" cy="16" r="15.5"></circle>
-                                            <line x1="10" y1="18" x2="16" y2="12"></line>
-                                            <line x1="16" y1="12" x2="22" y2="18"></line>
-                                        </g>
-                                    </svg>
-                                </a>
-                            </div>
-                        </div> -->
                     </div>
 
         </section>
@@ -561,7 +442,9 @@ https://templatemo.com/tm-583-festava-live
 
                                     <tbody>
                                         <tr>
-                                            <th><h3>Sunday</h3></th>
+                                            <th>
+                                                <h3>Sunday</h3>
+                                            </th>
 
                                             <td>
                                                 <h3>Brahmastra</h3>
@@ -609,7 +492,7 @@ https://templatemo.com/tm-583-festava-live
                                             </td>
 
                                             <td style="background-color: #D9E3DA"></td>
-                                        </tr> --> 
+                                        </tr> -->
 
                                         <!-- <tr>
                                             <th scope="row">Wednesday</th>
@@ -845,138 +728,8 @@ https://templatemo.com/tm-583-festava-live
         </section>
     </main>
 
-
-    <footer class="site-footer">
-        <div class="site-footer-top">
-            <div class="container">
-                <div class="row">
-
-                    <div class="col-lg-6 col-12">
-                        <h2 class="text-white mb-lg-0">Watch Better</h2>
-                    </div>
-
-                    <div class="col-lg-6 col-12 d-flex justify-content-lg-end align-items-center">
-                        <ul class="social-icon d-flex justify-content-lg-end">
-                            <li class="social-icon-item">
-                                <a href="#" class="social-icon-link">
-                                    <span class="bi-whatsapp"></span>
-                                </a>
-                            </li>
-
-                            <li class="social-icon-item">
-                                <a href="#" class="social-icon-link">
-                                    <span class="bi-facebook"></span>
-                                </a>
-                            </li>
-
-                            <li class="social-icon-item">
-                                <a href="#" class="social-icon-link">
-                                    <span class="bi-instagram"></span>
-                                </a>
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="container">
-            <div class="row">
-
-                <div class="col-lg-6 col-12 mb-4 pb-2">
-                    <h5 class="site-footer-title mb-3">Links</h5>
-
-                    <ul class="site-footer-links">
-                        <li class="site-footer-link-item">
-                            <a href="#" class="site-footer-link">Home</a>
-                        </li>
-
-                        <li class="site-footer-link-item">
-                            <a href="#" class="site-footer-link">About</a>
-                        </li>
-
-                        <li class="site-footer-link-item">
-                            <a href="#" class="site-footer-link">Movies</a>
-                        </li>
-
-                        <li class="site-footer-link-item">
-                            <a href="#" class="site-footer-link">Schedule</a>
-                        </li>
-
-                        <!-- <li class="site-footer-link-item">
-                            <a href="#" class="site-footer-link">Pricing</a>
-                        </li> -->
-
-                        <li class="site-footer-link-item">
-                            <a href="#" class="site-footer-link">Contact</a>
-                        </li>
-                    </ul>
-                </div>
-
-                <div class="col-lg-3 col-md-6 col-12 mb-4 mb-lg-0">
-                    <h5 class="site-footer-title mb-3">Have a question?</h5>
-
-                    <p class="text-white d-flex mb-1">
-                        <a href="tel: +91 87994 78161" class="site-footer-link">
-                            +91 87994 78161
-                        </a>
-                    </p>
-
-                    <p class="text-white d-flex">
-                        <a href="mailto:bhalodiyazeenal@gmail.com" class="site-footer-link">
-                            bhalodiyazeenal@gmail.com
-                        </a>
-                    </p>
-                </div>
-
-                <div class="col-lg-3 col-md-6 col-11 mb-4 mb-lg-0 mb-md-0">
-                    <h5 class="site-footer-title mb-3">Location</h5>
-
-                    <p class="text-white d-flex mt-3 mb-2">
-                        Varachha,Suart,Gujarat</p>
-
-                    <a class="link-fx-1 color-contrast-higher mt-3" href="#">
-                        <span>Our Maps</span>
-                        <svg class="icon" class="nav-link" id="nav-ContactMap-tab" data-bs-toggle="tab" data-bs-target="#nav-ContactMap" viewBox="0 0 32 32" aria-hidden="true">
-                            <g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
-                                <circle cx="16" cy="16" r="15.5"></circle>
-                                <line x1="10" y1="18" x2="16" y2="12"></line>
-                                <line x1="16" y1="12" x2="22" y2="18"></line>
-                            </g>
-                        </svg>
-                    </a>
-                </div>
-            </div>
-        </div>
-
-        <div class="site-footer-bottom">
-            <div class="container">
-                <div class="row">
-                    <div class="col-lg-8 col-12 mt-lg-5">
-                        <ul class="site-footer-links">
-                            <li class="site-footer-link-item">
-                                <a href="#" class="site-footer-link">Terms &amp; Conditions</a>
-                            </li>
-
-                            <li class="site-footer-link-item">
-                                <a href="#" class="site-footer-link">Privacy Policy</a>
-                            </li>
-
-                            <li class="site-footer-link-item">
-                                <a href="#" class="site-footer-link">Your Feedback</a>
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </footer>
-
-    <!--
-
-T e m p l a t e M o
-
--->
+    <!-- footer -->
+    <?php include_once("footer.php"); ?>
 
     <!-- JAVASCRIPT FILES -->
     <script src="js/jquery.min.js"></script>
